@@ -1,0 +1,49 @@
+{% load render_table from django_tables2 %}
+{% load bootstrap4 %}
+{% bootstrap_css %}
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'annotator/style.css' %}">
+
+<div>
+	<form action="change_view" method="post">
+	    {% csrf_token %}
+		<a class="btn btn-light" href="{% url 'annotator:home' %}">Back Home</a> 
+		<label> Sentence Index </label>
+		<input type="number" id="sindex" name="sindex" placeholder={{entry_pk}} min=1 max={{num_entries}}>
+		<input class="btn btn-light" type="submit" value="Go">
+		<a class="btn btn-light" href="{% url 'annotator:index' entry.eID|add:-1 %}"> &#8249;</a>
+		<a class="btn btn-light" href="{% url 'annotator:index' entry.eID|add:1 %}"> &#8250;</a>
+	</form>
+</div>
+
+<div>
+	{{ entry.entry_text }}
+</div>
+
+<div class="extractions">
+	{% for ext in entry.extraction_set.all %}
+		<span class="subject yellow-select"> {{ ext.sub_text }} </span> 
+		<span class="predicate yellow-select"> {{ ext.pred_text }} </span>
+		{% for arg in ext.extargument_set.all %}
+			<span class="argument yellow-select"> {{ arg.arg_text }} </span>
+		{% endfor %}
+		<br>
+	{% endfor %}
+</div>
+
+<div>
+	<form action="submit_belief" method="post">
+	    {% csrf_token %}
+	    {{ form }}
+    	<input class="btn btn-primary" type="submit" value="Submit">
+	</form>
+</div>
+
+<div class="table">
+	{% if num_annotations > 0 %}
+		{% render_table table %}
+	{% endif %}
+</div>
+
+
+	

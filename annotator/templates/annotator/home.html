@@ -1,0 +1,23 @@
+{% load bootstrap4 %}
+{% bootstrap_css %}
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'annotator/style.css' %}">
+
+
+<div>
+	<form action="db_upload" method="post" enctype="multipart/form-data">
+		{% csrf_token %}
+		{{ fileForm }}
+		<input class="btn btn-primary" type="submit" value="Upload">
+	</form>
+</div>
+
+{% if entries %}
+    <ul>
+    {% for entry in entries %}
+        <li><a href="{% url 'annotator:index' entry.eID %}">{{ entry.entry_text }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No polls are available.</p>
+{% endif %}

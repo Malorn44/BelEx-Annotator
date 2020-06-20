@@ -83,7 +83,7 @@ def db_upload(request):
 				argument = ExtArgument(arg_text = args[i], extraction=extraction)
 				argument.save()
 
-	return HttpResponseRedirect(reverse('annotator:index', args=(1,)))
+	return HttpResponseRedirect(reverse('annotator:home'))
 
 # TODO: This kindof works but not well
 # the url always gets set to have entry_pk 1 but it stays on the page if

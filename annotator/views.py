@@ -56,7 +56,7 @@ def delete_all_objects(model):
 	model.objects.all().delete()
 
 # TODO: Upload database (might replace with something else later idk)
-def db_upload(request, entry_pk):
+def db_upload(request):
 	form = UploadFileForm(request.POST, request.FILES)
 	if form.is_valid():
 

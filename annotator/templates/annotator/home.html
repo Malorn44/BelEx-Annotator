@@ -6,11 +6,19 @@
 <div>
 	<form action="db_upload" method="post" enctype="multipart/form-data">
 		{% csrf_token %}
-		{{ fileForm }}
+		{{ dbForm }}
 		<input class="btn btn-primary" type="submit" value="Upload">
 	</form>
 
     {% include "annotator/export_button.html" %}
+    <br>
+
+    <form action="annotation_upload" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ annotationForm }}
+        <input class="btn btn-primary" type="submit" value="Upload">
+    </form>
+
 
 </div>
 

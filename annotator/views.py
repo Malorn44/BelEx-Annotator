@@ -4,7 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.views.generic.detail import DetailView
 from django.urls import reverse
 
-from .forms import AnnotatorForm, UploadFileForm
+from .forms import AnnotatorForm, UploadFileForm, UploadAnnotationForm
 from .tables import AnnotationTable
 from .models import Entry, Annotation, Extraction, ExtArgument
 
@@ -18,7 +18,8 @@ def home(request):
 			return export_annotations(request)
 
 	entries = Entry.objects.order_by('eID')
-	fileForm = UploadFileForm()
+	dbForm = UploadFileForm()
+	annotationForm = UploadAnnotationForm()
 
 	return render(request, 'annotator/home.html', locals())
 
@@ -65,7 +66,6 @@ def change_view(request, entry_pk):
 def delete_all_objects(model):
 	model.objects.all().delete()
 
-# TODO: Upload database (might replace with something else later idk)
 def db_upload(request):
 	form = UploadFileForm(request.POST, request.FILES)
 	if form.is_valid():
@@ -92,6 +92,28 @@ def db_upload(request):
 			for i in range(3, len(args)):
 				argument = ExtArgument(arg_text = args[i], extraction=extraction)
 				argument.save()
+
+	return HttpResponseRedirect(reverse('annotator:home'))
+
+def annotation_upload(request):
+	form = UploadAnnotationForm(request.POST, request.FILES)
+
+	if form.is_valid():
+
+		f = request.FILES['file']
+		for line in f.readlines():
+
+			args = list(map(str.strip, line.decode().split('\t')))
+
+			try:
+				entry = Entry.objects.get(entry_text__exact=args[0])
+				entry.save()
+			except Entry.DoesNotExist:
+				continue
+
+			annotation = Annotation(source = args[1], belief = args[2], target = args[3],
+				strength = args[4], valuation = args[5], entry=entry)
+			annotation.save()
 
 	return HttpResponseRedirect(reverse('annotator:home'))
 

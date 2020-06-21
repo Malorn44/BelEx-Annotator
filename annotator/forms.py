@@ -31,5 +31,7 @@ class AnnotatorForm(forms.Form):
 		widget=forms.Select(attrs={'class': 'custom-select'}))
 
 class UploadFileForm(forms.Form):
-	file = forms.FileField(label='')
+	file = forms.FileField(label='Upload Database')
 
+class UploadAnnotationForm(forms.Form):
+	file = forms.FileField(label='Upload Annotations')

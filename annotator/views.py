@@ -8,6 +8,7 @@ from .forms import AnnotatorForm, UploadFileForm, UploadAnnotationForm
 from .tables import AnnotationTable
 from .models import Entry, Annotation, Extraction, ExtArgument
 
+import datetime
 import csv
 
 # Create your views here.
@@ -143,7 +144,8 @@ def delete_item(request, entry_pk, item_pk):
 def export_annotations(request):
 
 	response = HttpResponse(content_type='text/tsv')
-	response['Content-Disposition'] = 'attachment; filename="test.tsv"'
+	filename = "belex_annotations_"+str(datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S"))
+	response['Content-Disposition'] = 'attachment; filename='+filename
 	tsv_writer = csv.writer(response, delimiter='\t')
 
 	# not very efficient but should be fine

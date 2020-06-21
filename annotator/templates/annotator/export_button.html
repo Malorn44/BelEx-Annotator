@@ -1,6 +1,6 @@
 <script src='https://kit.fontawesome.com/a076d05399.js'></script>
 
-<form action="export_annotations" method="post">
+<form method="post">
 	{% csrf_token %}
-	<button class="btn btn-light top-right"> <i class='fas fa-file-export'></i> Export Annotations </button>
+	<button class="btn btn-light top-right" name="_export"> <i class='fas fa-file-export'></i> Export Annotations </button>
 </form>

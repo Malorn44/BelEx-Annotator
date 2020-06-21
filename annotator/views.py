@@ -8,15 +8,25 @@ from .forms import AnnotatorForm, UploadFileForm
 from .tables import AnnotationTable
 from .models import Entry, Annotation, Extraction, ExtArgument
 
+import csv
+
 # Create your views here.
 
 def home(request):
+	if request.POST:
+		if '_export' in request.POST:
+			return export_annotations(request)
+
 	entries = Entry.objects.order_by('eID')
 	fileForm = UploadFileForm()
 
 	return render(request, 'annotator/home.html', locals())
 
 def index(request, entry_pk=1):
+	if request.POST:
+		if '_export' in request.POST:
+			return export_annotations(request)
+
 	try:
 		entry = Entry.objects.get(eID=entry_pk)
 	except:
@@ -96,6 +106,20 @@ def delete_item(request, entry_pk, item_pk):
 	return HttpResponseRedirect(reverse('annotator:index', args=(entry_pk,)))
 
 def export_annotations(request):
-	print('test')
-	return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
+	response = HttpResponse(content_type='text/tsv')
+	response['Content-Disposition'] = 'attachment; filename="test.tsv"'
+	tsv_writer = csv.writer(response, delimiter='\t')
+
+	# not very efficient but should be fine
+	for entry in Entry.objects.all():
+		for annotation in entry.annotation_set.all():
+			tsv_writer.writerow([
+				entry.entry_text,
+				annotation.source,
+				annotation.belief,
+				annotation.target,
+				annotation.strength,
+				annotation.valuation])
+
+	return response

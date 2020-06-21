@@ -7,7 +7,6 @@ app_name = 'annotator'
 urlpatterns = [
 	path('', views.home, name='home'),
     path('db_upload', views.db_upload, name='db_upload'),
-    re_path(r'.*/export_annotations', views.export_annotations, name='export_annotations'),
     path('<int:entry_pk>/', views.index, name='index'),
     path('<int:entry_pk>/submit_belief', views.submit_belief, name='submit_belief'),
     path('<int:entry_pk>/change_view', views.change_view, name='change_view'),

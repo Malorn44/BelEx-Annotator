@@ -1,0 +1,7 @@
+<script src='https://kit.fontawesome.com/a076d05399.js'></script>
+
+<form method="post" class="top-right"
+	onsubmit="return confirm(delete_annotations_warning)">
+	{% csrf_token %}
+	<button class="btn btn-danger" name="_delete"> <i class='fa fa-trash'></i> Delete Annotations </button>
+</form>

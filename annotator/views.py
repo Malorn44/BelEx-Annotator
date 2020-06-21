@@ -16,10 +16,23 @@ def home(request):
 	if request.POST:
 		if '_export' in request.POST:
 			return export_annotations(request)
+		elif '_delete' in request.POST:
+			delete_annotations(request)
 
 	entries = Entry.objects.order_by('eID')
 	dbForm = UploadFileForm()
 	annotationForm = UploadAnnotationForm()
+
+	db_upload_warning = ("WARNING. Uploading a new database will delete all objects currently stored "
+		"including any annotations you may have made. If you want to save a copy of your annotations "
+		"you can use the \"Export Annotations\" button. Are you sure you want to upload a new database?")
+	annotation_upload_warning = ("WARNING. You are about to upload annotations. This will append all "
+		"annotations from your uploaded file to your current annotations (ignoring annotations that can not "
+		"be matched to any sentences in the database) and can not be undone. You can use the \"Export "
+		"Annotations\" button to make a backup of your annotations. Are you sure you want to upload annotations?")
+	delete_annotations_warning = ("WARNING. You are about to delete all annotations. This action can not be "
+		"undone. You can use the \"Export Annotations\" button to make a backup of your annotations. Are you "
+		"sure you want to delete all annotations?")
 
 	return render(request, 'annotator/home.html', locals())
 
@@ -145,3 +158,6 @@ def export_annotations(request):
 				annotation.valuation])
 
 	return response
+
+def delete_annotations(request):
+	delete_all_objects(Annotation)

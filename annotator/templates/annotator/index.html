@@ -14,6 +14,9 @@
 		<a class="btn btn-light" href="{% url 'annotator:index' entry.eID|add:-1 %}"> &#8249;</a>
 		<a class="btn btn-light" href="{% url 'annotator:index' entry.eID|add:1 %}"> &#8250;</a>
 	</form>
+
+	{% include "annotator/export_button.html" %}
+
 </div>
 
 <div>

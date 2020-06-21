@@ -46,7 +46,7 @@ def submit_belief(request, entry_pk):
 			strength = data['strength'],
 			valuation = data['valuation'])
 
-	return HttpResponseRedirect(reverse('annotator:index', args=(entry_pk,)))
+	return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 def change_view(request, entry_pk):
 	form = request.POST
@@ -94,4 +94,8 @@ def delete_item(request, entry_pk, item_pk):
 	Annotation.objects.filter(pk=item_pk).delete()
 
 	return HttpResponseRedirect(reverse('annotator:index', args=(entry_pk,)))
+
+def export_annotations(request):
+	print('test')
+	return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 

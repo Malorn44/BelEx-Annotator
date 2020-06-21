@@ -48,3 +48,9 @@ input[type=number] {
   background: #fff2a8;
 }
 
+.top-right {
+	position:absolute;
+	top:8px;
+	right:8px;
+}
+

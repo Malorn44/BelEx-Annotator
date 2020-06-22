@@ -144,7 +144,7 @@ def delete_item(request, entry_pk, item_pk):
 def export_annotations(request):
 
 	response = HttpResponse(content_type='text/tsv')
-	filename = "belex_annotations_"+str(datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S"))
+	filename = "belex_annotations_"+str(datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S"))+".tsv"
 	response['Content-Disposition'] = 'attachment; filename='+filename
 	tsv_writer = csv.writer(response, delimiter='\t')
 

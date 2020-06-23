@@ -14,11 +14,17 @@ import csv
 # Create your views here.
 
 def home(request):
+	errors = []
+
 	if request.POST:
 		if '_export' in request.POST:
 			return export_annotations(request)
 		elif '_delete' in request.POST:
 			delete_annotations(request)
+		elif '_db_upload' in request.POST:
+			errors += db_upload(request)
+		elif '_annotation_upload' in request.POST:
+			errors += annotation_upload(request)
 
 	entries = Entry.objects.order_by('eID')
 	dbForm = UploadFileForm()
@@ -82,6 +88,7 @@ def delete_all_objects(model):
 
 def db_upload(request):
 	form = UploadFileForm(request.POST, request.FILES)
+	errors = []
 	if form.is_valid():
 
 		delete_all_objects(ExtArgument)
@@ -106,12 +113,14 @@ def db_upload(request):
 			for i in range(3, len(args)):
 				argument = ExtArgument(arg_text = args[i], extraction=extraction)
 				argument.save()
+	else:
+		errors += [form.errors.get_json_data(escape_html=False)['file'][0]['message']]
 
-	return HttpResponseRedirect(reverse('annotator:home'))
+	return errors
 
 def annotation_upload(request):
 	form = UploadAnnotationForm(request.POST, request.FILES)
-
+	errors = []
 	if form.is_valid():
 
 		f = request.FILES['file']
@@ -128,8 +137,10 @@ def annotation_upload(request):
 			annotation = Annotation(source = args[1], belief = args[2], target = args[3],
 				strength = args[4], valuation = args[5], entry=entry)
 			annotation.save()
+	else:
+		errors += [form.errors.get_json_data(escape_html=False)['file'][0]['message']]
 
-	return HttpResponseRedirect(reverse('annotator:home'))
+	return errors
 
 # TODO: This kindof works but not well
 # the url always gets set to have entry_pk 1 but it stays on the page if

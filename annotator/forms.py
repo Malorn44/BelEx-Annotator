@@ -1,4 +1,7 @@
 from django import forms
+from django.core.validators import FileExtensionValidator
+
+from .validators import upload_db_validator
 
 class AnnotatorForm(forms.Form):
 	source = forms.CharField(label='Source', max_length=100)
@@ -31,7 +34,9 @@ class AnnotatorForm(forms.Form):
 		widget=forms.Select(attrs={'class': 'custom-select'}))
 
 class UploadFileForm(forms.Form):
-	file = forms.FileField(label='Upload Database')
+	file = forms.FileField(label='Upload Database',
+		validators=[FileExtensionValidator(['tsv'])])#, upload_db_validator])
 
 class UploadAnnotationForm(forms.Form):
-	file = forms.FileField(label='Upload Annotations')
+	file = forms.FileField(label='Upload Annotations',
+		validators=[FileExtensionValidator(['tsv'])])

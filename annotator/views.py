@@ -44,20 +44,26 @@ def home(request):
 	return render(request, 'annotator/home.html', locals())
 
 def index(request, entry_pk=1):
+	def_form_vals = []
+
 	if request.POST:
 		if '_export' in request.POST:
 			return export_annotations(request)
+		elif '_submit_annotation' in request.POST:
+			submit_belief(request, entry_pk)
 		elif '_openIE_copy' in request.POST:
 			copy_openIE_to_annotations(request, entry_pk)
 		elif '_delete_annotation' in request.POST:
 			delete_item(request, request.POST['_delete_annotation'])
+		elif '_modify_annotation' in request.POST:
+			def_form_vals = get_annotation_dict(request, request.POST['_modify_annotation'])
 
 	try:
 		entry = Entry.objects.get(eID=entry_pk)
 	except:
 		return HttpResponseRedirect(reverse('annotator:index', args=(1,)))
 	else:
-		form = AnnotatorForm()
+		form = AnnotatorForm(initial=def_form_vals)
 
 		annotations = Annotation.objects.filter(entry=entry)
 		table = AnnotationTable(annotations)
@@ -85,6 +91,17 @@ def add_annotation(request, entry, args):
 		strength = args[3], valuation = args[4], entry=entry)
 	annotation.save()
 
+def modify_annotation(request, args):
+	annotation = Annotation.objects.get(id=args[5])
+
+	annotation.source = args[0]
+	annotation.belief = args[1]
+	annotation.target = args[2]
+	annotation.strength = args[3]
+	annotation.valuation = args[4]
+
+	annotation.save()
+
 
 def submit_belief(request, entry_pk):
 	entry = Entry.objects.get(eID=entry_pk)
@@ -93,7 +110,10 @@ def submit_belief(request, entry_pk):
 	if form.is_valid():
 
 		data = [item[1] for item in form.cleaned_data.items()]
-		add_annotation(request, entry, data)
+		if data[5] is None:
+			add_annotation(request, entry, data)
+		else:
+			modify_annotation(request, data)
 
 	return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
@@ -187,6 +207,14 @@ def delete_item(request, item_pk):
 		return
 	else:
 		annotation.delete()
+
+def get_annotation_dict(request, item_pk):
+	try:
+		annotation = Annotation.objects.get(pk=item_pk)
+	except Annotation.DoesNotExist:
+		return []
+	else:
+		return annotation.__dict__
 
 def export_annotations(request):
 

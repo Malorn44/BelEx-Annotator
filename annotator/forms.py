@@ -33,6 +33,8 @@ class AnnotatorForm(forms.Form):
 	valuation = forms.ChoiceField(label='Valuation', choices=VALUATION_CHOICES, 
 		widget=forms.Select(attrs={'class': 'custom-select'}))
 
+	id = forms.IntegerField(widget=forms.HiddenInput, required=False)
+
 class UploadFileForm(forms.Form):
 	file = forms.FileField(label='Upload Database',
 		validators=[FileExtensionValidator(['tsv'])])#, upload_db_validator])

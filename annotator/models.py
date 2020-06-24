@@ -28,4 +28,8 @@ class Annotation(models.Model):
 	target = models.CharField(max_length=1000)
 	strength = models.CharField(max_length=1000)
 	valuation = models.CharField(max_length=1000)
+
+	def toList(self):
+		return self.__dict__()
+		# return [value for value in self.__dict__.values()]
 	

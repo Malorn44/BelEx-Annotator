@@ -62,20 +62,34 @@ def index(request, entry_pk=1):
 		num_annotations = annotations.count()
 
 		return render(request, 'annotator/index.html', locals())
-	
+
+# adds annotation making sure there are no duplicates
+def add_annotation(request, entry, args):
+	annotations = Annotation.objects.filter(entry=entry)
+
+	for annotation in annotations:
+
+		if (annotation.source == args[0] and
+			annotation.belief == args[1] and
+			annotation.target == args[2] and
+			annotation.strength == args[3] and
+			annotation.valuation == args[4]):
+
+			return
+
+	annotation = Annotation(source = args[0], belief = args[1], target = args[2],
+		strength = args[3], valuation = args[4], entry=entry)
+	annotation.save()
+
+
 def submit_belief(request, entry_pk):
 	entry = Entry.objects.get(eID=entry_pk)
 
 	form = AnnotatorForm(request.POST)
 	if form.is_valid():
-		data = form.cleaned_data
-		annotation = Annotation.objects.create(
-			entry = entry,
-			source = data['source'],
-			belief = data['belief'],
-			target = data['target'],
-			strength = data['strength'],
-			valuation = data['valuation'])
+
+		data = [item[1] for item in form.cleaned_data.items()]
+		add_annotation(request, entry, data)
 
 	return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
@@ -134,9 +148,7 @@ def annotation_upload(request):
 			except Entry.DoesNotExist:
 				continue
 
-			annotation = Annotation(source = args[1], belief = args[2], target = args[3],
-				strength = args[4], valuation = args[5], entry=entry)
-			annotation.save()
+			add_annotation(request, entry, args[1:])
 	else:
 		errors += [form.errors.get_json_data(escape_html=False)['file'][0]['message']]
 

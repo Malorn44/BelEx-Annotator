@@ -186,7 +186,7 @@ def delete_item(request, entry_pk, item_pk):
 	entry_pk = Annotation.objects.get(pk=item_pk).entry.eID
 	Annotation.objects.filter(pk=item_pk).delete()
 
-	return HttpResponseRedirect(reverse('annotator:index', args=(entry_pk,)))
+	return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 def export_annotations(request):
 

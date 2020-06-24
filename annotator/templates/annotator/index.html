@@ -35,6 +35,7 @@
 
 <div class="extractions">
 	{% for ext in entry.extraction_set.all %}
+		<span class="unselectable"> {{ forloop.counter }}) </span>
 		<span class="subject yellow-select"> {{ ext.sub_text }} </span> 
 		<span class="predicate yellow-select"> {{ ext.pred_text }} </span>
 		{% for arg in ext.extargument_set.all %}

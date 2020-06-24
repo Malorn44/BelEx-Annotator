@@ -23,6 +23,16 @@
 	{{ entry.entry_text }}
 </div>
 
+<div>
+
+	<form method="post" class="top-right">
+		{% csrf_token %}
+		<button class="btn btn-primary" name="_openIE_copy"> <i class='fa fa-copy'></i> Add OpenIE as Belief Extractions </button>
+	</form>
+
+	<h2> OpenIE Extractions </h2> 
+</div>
+
 <div class="extractions">
 	{% for ext in entry.extraction_set.all %}
 		<span class="subject yellow-select"> {{ ext.sub_text }} </span> 

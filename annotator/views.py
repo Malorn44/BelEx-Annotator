@@ -47,6 +47,8 @@ def index(request, entry_pk=1):
 	if request.POST:
 		if '_export' in request.POST:
 			return export_annotations(request)
+		elif '_openIE_copy' in request.POST:
+			copy_openIE_to_annotations(request, entry_pk)
 
 	try:
 		entry = Entry.objects.get(eID=entry_pk)
@@ -92,6 +94,28 @@ def submit_belief(request, entry_pk):
 		add_annotation(request, entry, data)
 
 	return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+def copy_openIE_to_annotations(request, entry_pk):
+	entry = Entry.objects.get(eID=entry_pk)
+
+	extractions = Extraction.objects.filter(entry=entry)
+
+	for extraction in extractions:
+		ext_args = ExtArgument.objects.filter(extraction=extraction)
+
+		args = []
+		args.append("Author")
+
+		belief = extraction.pred_text
+		for ext_arg in ext_args:
+			belief += ' ' + ext_arg.arg_text
+
+		args.append(belief)
+		args.append(extraction.sub_text)
+		args.append('4')
+		args.append('4')
+
+		add_annotation(request, entry, args)
 
 def change_view(request, entry_pk):
 	form = request.POST

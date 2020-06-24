@@ -182,9 +182,15 @@ def annotation_upload(request):
 # the url always gets set to have entry_pk 1 but it stays on the page if
 # it isn't 1. This is because I can't figure out how to pass arguments
 # correctly in the delete_button.html
+# though now this doesn't matter since it uses HTTP_REFERER so we just have an extra argument not being used
 def delete_item(request, entry_pk, item_pk):
-	entry_pk = Annotation.objects.get(pk=item_pk).entry.eID
-	Annotation.objects.filter(pk=item_pk).delete()
+	try:
+		annotation = Annotation.objects.get(pk=item_pk)
+	except Annotation.DoesNotExist:
+		return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+	else:
+		entry_pk = annotation.entry.eID
+		annotation.delete()
 
 	return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 

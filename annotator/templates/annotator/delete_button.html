@@ -1,3 +1,5 @@
-<a href="{% url 'annotator:delete_item' 1 record.pk %}">
-	<button type="button" class='btn btn-danger'> Delete </button>
-</a>
+
+<form method='POST'> 
+	{% csrf_token %}
+	<button class='btn btn-danger' name="_delete_annotation" value="{{record.pk}}"> Delete </button>
+</form>

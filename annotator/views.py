@@ -49,6 +49,8 @@ def index(request, entry_pk=1):
 			return export_annotations(request)
 		elif '_openIE_copy' in request.POST:
 			copy_openIE_to_annotations(request, entry_pk)
+		elif '_delete_annotation' in request.POST:
+			delete_item(request, request.POST['_delete_annotation'])
 
 	try:
 		entry = Entry.objects.get(eID=entry_pk)
@@ -178,21 +180,13 @@ def annotation_upload(request):
 
 	return errors
 
-# TODO: This kindof works but not well
-# the url always gets set to have entry_pk 1 but it stays on the page if
-# it isn't 1. This is because I can't figure out how to pass arguments
-# correctly in the delete_button.html
-# though now this doesn't matter since it uses HTTP_REFERER so we just have an extra argument not being used
-def delete_item(request, entry_pk, item_pk):
+def delete_item(request, item_pk):
 	try:
 		annotation = Annotation.objects.get(pk=item_pk)
 	except Annotation.DoesNotExist:
-		return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+		return
 	else:
-		entry_pk = annotation.entry.eID
 		annotation.delete()
-
-	return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 def export_annotations(request):
 

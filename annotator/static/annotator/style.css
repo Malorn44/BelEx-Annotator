@@ -68,3 +68,7 @@ form {
 	-ms-user-select: none;
 	user-select: none;
 }
+
+.editing {
+    background-color: #f2dede;
+}

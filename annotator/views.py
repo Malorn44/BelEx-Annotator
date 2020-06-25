@@ -56,7 +56,7 @@ def index(request, entry_pk=1):
 		elif '_delete_annotation' in request.POST:
 			delete_item(request, request.POST['_delete_annotation'])
 		elif '_modify_annotation' in request.POST:
-			def_form_vals = get_annotation_dict(request, request.POST['_modify_annotation'])
+			def_form_vals = edit_item_prep(request, request.POST['_modify_annotation'])
 
 	try:
 		entry = Entry.objects.get(eID=entry_pk)
@@ -64,6 +64,9 @@ def index(request, entry_pk=1):
 		return HttpResponseRedirect(reverse('annotator:index', args=(1,)))
 	else:
 		form = AnnotatorForm(initial=def_form_vals)
+		editing_id = 0
+		if (def_form_vals):
+			editing_id = def_form_vals['id']
 
 		annotations = Annotation.objects.filter(entry=entry)
 		table = AnnotationTable(annotations)
@@ -92,7 +95,7 @@ def add_annotation(request, entry, args):
 	annotation.save()
 
 def modify_annotation(request, args):
-	annotation = Annotation.objects.get(id=args[5])
+	annotation = Annotation.objects.get(pk=args[5])
 
 	annotation.source = args[0]
 	annotation.belief = args[1]
@@ -208,7 +211,7 @@ def delete_item(request, item_pk):
 	else:
 		annotation.delete()
 
-def get_annotation_dict(request, item_pk):
+def edit_item_prep(request, item_pk):
 	try:
 		annotation = Annotation.objects.get(pk=item_pk)
 	except Annotation.DoesNotExist:

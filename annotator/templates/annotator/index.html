@@ -55,7 +55,8 @@
 
 <div class="table">
 	{% if num_annotations > 0 %}
-		{% render_table table %}
+		{% include "annotator/annotation_table.html" %}
+		<!-- {% render_table table %} -->
 	{% endif %}
 </div>
 

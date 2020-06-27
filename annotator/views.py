@@ -57,6 +57,8 @@ def index(request, entry_pk=1):
 			delete_item(request, request.POST['_delete_annotation'])
 		elif '_modify_annotation' in request.POST:
 			def_form_vals = edit_item_prep(request, request.POST['_modify_annotation'])
+		elif '_verify_annotation' in request.POST:
+			verify_item(request, request.POST['_verify_annotation'])
 
 	try:
 		entry = Entry.objects.get(eID=entry_pk)
@@ -66,6 +68,7 @@ def index(request, entry_pk=1):
 		form = AnnotatorForm(initial=def_form_vals)
 		editing_id = 0
 		if (def_form_vals):
+			print(def_form_vals)
 			editing_id = def_form_vals['id']
 
 		annotations = Annotation.objects.filter(entry=entry)
@@ -77,7 +80,7 @@ def index(request, entry_pk=1):
 		return render(request, 'annotator/index.html', locals())
 
 # adds annotation making sure there are no duplicates
-def add_annotation(request, entry, args):
+def add_annotation(request, entry, args, verified):
 	annotations = Annotation.objects.filter(entry=entry)
 
 	for annotation in annotations:
@@ -91,7 +94,7 @@ def add_annotation(request, entry, args):
 			return
 
 	annotation = Annotation(source = args[0], belief = args[1], target = args[2],
-		strength = args[3], valuation = args[4], entry=entry)
+		strength = args[3], valuation = args[4], verified = verified, entry=entry)
 	annotation.save()
 
 def modify_annotation(request, args):
@@ -102,6 +105,8 @@ def modify_annotation(request, args):
 	annotation.target = args[2]
 	annotation.strength = args[3]
 	annotation.valuation = args[4]
+
+	annotation.verified = True
 
 	annotation.save()
 
@@ -114,7 +119,8 @@ def submit_belief(request, entry_pk):
 
 		data = [item[1] for item in form.cleaned_data.items()]
 		if data[5] is None:
-			add_annotation(request, entry, data)
+			# we can verify annotations that are handwritten
+			add_annotation(request, entry, data, True)
 		else:
 			modify_annotation(request, data)
 
@@ -140,7 +146,8 @@ def copy_openIE_to_annotations(request, entry_pk):
 		args.append('4')
 		args.append('4')
 
-		add_annotation(request, entry, args)
+		# annotations added on the fly shouldn't be verified by default
+		add_annotation(request, entry, args, False)
 
 def change_view(request, entry_pk):
 	form = request.POST
@@ -219,6 +226,16 @@ def edit_item_prep(request, item_pk):
 	else:
 		return annotation.__dict__
 
+def verify_item(request, item_pk):
+	try:
+		annotation = Annotation.objects.get(pk=item_pk)
+	except Annotation.DoesNotExist:
+		return
+	else:
+		annotation.verified = True
+		annotation.save()
+		return
+
 def export_annotations(request):
 
 	response = HttpResponse(content_type='text/tsv')
@@ -229,13 +246,15 @@ def export_annotations(request):
 	# not very efficient but should be fine
 	for entry in Entry.objects.all():
 		for annotation in entry.annotation_set.all():
-			tsv_writer.writerow([
-				entry.entry_text,
-				annotation.source,
-				annotation.belief,
-				annotation.target,
-				annotation.strength,
-				annotation.valuation])
+			# only save verified annotations
+			if annotation.verified:
+				tsv_writer.writerow([
+					entry.entry_text,
+					annotation.source,
+					annotation.belief,
+					annotation.target,
+					annotation.strength,
+					annotation.valuation])
 
 	return response
 

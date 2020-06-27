@@ -69,6 +69,11 @@ form {
 	user-select: none;
 }
 
+.unnaproved {
+	background-color: #f7ae18;
+}
+
 .editing {
-    background-color: #f2dede;
+	background-color: #459fd7;
+    /*background-color: #f2dede;*/
 }

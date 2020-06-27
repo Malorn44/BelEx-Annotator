@@ -29,7 +29,5 @@ class Annotation(models.Model):
 	strength = models.CharField(max_length=1000)
 	valuation = models.CharField(max_length=1000)
 
-	def toList(self):
-		return self.__dict__()
-		# return [value for value in self.__dict__.values()]
+	verified = models.BooleanField(default=False)
 	

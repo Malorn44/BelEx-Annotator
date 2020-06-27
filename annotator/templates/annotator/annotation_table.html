@@ -7,18 +7,21 @@
             <th> Strength </th>
             <th> Valuation </th>
             <th> Modify </th>
+            <th> Verify </th>
             <th> Delete </th>
         </tr>
     </thead>        
     <tbody>
         {% for annotation in entry.annotation_set.all %}
-            <tr class="{% if annotation.pk == editing_id %} editing {% endif %}"> 
+            <tr class="{% if not annotation.verified %} unnaproved {% endif %}
+                {% if annotation.pk == editing_id %} editing {% endif %}"> 
                 <td> {{ annotation.source }} </td>
                 <td> {{ annotation.belief }} </td>
                 <td> {{ annotation.target }} </td>
                 <td> {{ annotation.strength }} </td>
                 <td> {{ annotation.valuation }} </td>
                 <td> {% include "annotator/modify_button.html" %} </td>
+                <td> {% include "annotator/verify_button.html" %} </td>
                 <td> {% include "annotator/delete_button.html" %} </td>   
             </tr>
         {% endfor%}

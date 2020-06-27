@@ -204,7 +204,7 @@ def annotation_upload(request):
 			except Entry.DoesNotExist:
 				continue
 
-			add_annotation(request, entry, args[1:])
+			add_annotation(request, entry, args[1:], True)
 	else:
 		errors += [form.errors.get_json_data(escape_html=False)['file'][0]['message']]
 

@@ -15,16 +15,11 @@
 		<a class="btn btn-light" href="{% url 'annotator:index' entry.eID|add:1 %}"> &#8250;</a>
 	</form>
 
+	
 	{% include "annotator/export_button.html" %}
-
-</div>
-
-<div>
-	{{ entry.entry_text }}
-</div>
+	<button class="btn btn-circle btn-lg top-right" onclick="alert('Export Annotations only exports those that are verified.\nAnnotations entered manually and those that are uploaded via the form on the Home page are automatically verified.\nYou can verify an annotation by clicking the Verify button or by clicking the Modify button and re-submitting.\nAnnotations you don\'t want can be removed with the Delete button.');"><i class="fa fa-question-circle"></i></button>
 
 <div>
-
 	<form method="post" class="top-right">
 		{% csrf_token %}
 		<button class="btn btn-primary" name="_openIE_copy"> <i class='fa fa-copy'></i> Add OpenIE as Belief Extractions </button>

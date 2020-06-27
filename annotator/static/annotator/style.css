@@ -44,6 +44,7 @@ form {
 	width:auto !important;
 }
 
+
 /* Yellow highlight for visibility purposes */
 .yellow-select::selection {
   background: #fff2a8;

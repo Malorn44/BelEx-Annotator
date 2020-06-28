@@ -45,11 +45,11 @@
 
 
 {% if entries %}
-    <ul>
+    <ol>
     {% for entry in entries %}
         <li><a href="{% url 'annotator:index' entry.eID %}">{{ entry.entry_text }} [{{ entry.annotation_set.count }}]</a></li>
     {% endfor %}
-    </ul>
+    </ol>
 {% else %}
     <p>No entries.</p>
 {% endif %}

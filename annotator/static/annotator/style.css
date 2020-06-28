@@ -54,10 +54,6 @@ form {
 }
 
 .top-right {
-	/*position:absolute;
-	top:8px;
-	right:8px;
-}*/
 	float:right;
 }
 
@@ -76,5 +72,4 @@ form {
 
 .editing {
 	background-color: #459fd7;
-    /*background-color: #f2dede;*/
 }

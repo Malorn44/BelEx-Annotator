@@ -47,7 +47,7 @@
 {% if entries %}
     <ul>
     {% for entry in entries %}
-        <li><a href="{% url 'annotator:index' entry.eID %}">{{ entry.entry_text }}</a></li>
+        <li><a href="{% url 'annotator:index' entry.eID %}">{{ entry.entry_text }} [{{ entry.annotation_set.count }}]</a></li>
     {% endfor %}
     </ul>
 {% else %}

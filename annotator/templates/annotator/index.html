@@ -4,8 +4,22 @@
 {% load static %}
 <link rel="stylesheet" type="text/css" href="{% static 'annotator/style.css' %}">
 
+<script type="text/javascript">
+	window.addEventListener('load',function() {
+    	if(localStorage.getItem('scrollPosition') !== null)
+       		window.scrollTo(0, localStorage.getItem('scrollPosition'));
+	},false);
+
+	function storeScrollPos() {
+		localStorage.setItem('scrollPosition', window.scrollY)
+	}
+	function storeScrollTop() {
+		localStorage.setItem('scrollPosition', 0)
+	}
+</script>
+
 <div>
-	<form action="change_view" method="post">
+	<form action="change_view" method="post" onsubmit="storeScrollTop()">
 	    {% csrf_token %}
 		<a class="btn btn-light" href="{% url 'annotator:home' %}">Back Home</a> 
 		<label> Sentence Index </label>
@@ -18,9 +32,10 @@
 	
 	{% include "annotator/export_button.html" %}
 	<button class="btn btn-circle btn-lg top-right" onclick="alert('Export Annotations only exports those that are verified.\nAnnotations entered manually and those that are uploaded via the form on the Home page are automatically verified.\nYou can verify an annotation by clicking the Verify button or by clicking the Modify button and re-submitting.\nAnnotations you don\'t want can be removed with the Delete button.');"><i class="fa fa-question-circle"></i></button>
+</div>
 
 <div>
-	<form method="post" class="top-right">
+	<form method="post" class="top-right" onsubmit="storeScrollPos()">
 		{% csrf_token %}
 		<button class="btn btn-primary" name="_openIE_copy"> <i class='fa fa-copy'></i> Add OpenIE as Belief Extractions </button>
 	</form>
@@ -41,12 +56,18 @@
 </div>
 
 <div>
-	<form method="post">
+	<form method="post" onsubmit="storeScrollPos()">
 	    {% csrf_token %}
 	    {{ form }}
     	<input class="btn btn-primary" type="submit" name="_submit_annotation" value="Submit">
 	</form>
 </div>
+
+<!-- <form method="post" onsubmit="store()">
+	{% csrf_token %}
+	<input class="btn btn-primary" type="submit" name="dddd" value="Test">
+</form> -->
+
 
 <div class="table">
 	{% if num_annotations > 0 %}

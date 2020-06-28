@@ -1,5 +1,5 @@
 
-<form method='POST'> 
+<form method='POST' onsubmit="storeScrollPos()"> 
 	{% csrf_token %}
 	<button class='btn btn-success' name="_verify_annotation" value="{{annotation.pk}}"
 		{% if annotation.verified %} disabled {% endif %}> Verify </button>

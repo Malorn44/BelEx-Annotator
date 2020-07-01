@@ -34,6 +34,8 @@
 	<button class="btn btn-circle btn-lg top-right" onclick="alert('Export Annotations only exports those that are verified.\nAnnotations entered manually and those that are uploaded via the form on the Home page are automatically verified.\nYou can verify an annotation by clicking the Verify button or by clicking the Modify button and re-submitting.\nAnnotations you don\'t want can be removed with the Delete button.');"><i class="fa fa-question-circle"></i></button>
 </div>
 
+{{ entry.entry_text }}
+
 <div>
 	<form method="post" class="top-right" onsubmit="storeScrollPos()">
 		{% csrf_token %}

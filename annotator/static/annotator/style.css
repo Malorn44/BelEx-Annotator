@@ -28,15 +28,27 @@ form {
 }
 
 .subject {
-	background-color:#2CA12B;
+	background-color: #2CA12B;
 }
 
 .predicate {
-	background-color:#3F97D9;
+	background-color: #3F97D9;
 }
 
 .argument {
-	background-color:#9464BD;
+	background-color: #9464BD;
+}
+
+.source {
+	background-color: rgba(242,89,13,0.7);
+}
+
+.belief {
+	background-color: rgba(63,151,217,0.7);
+}
+
+.target {
+	background-color: rgba(44,161,43,0.7);
 }
 
 /* Override bootstrap4 class */

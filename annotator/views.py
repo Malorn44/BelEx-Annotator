@@ -68,7 +68,6 @@ def index(request, entry_pk=1):
 		form = AnnotatorForm(initial=def_form_vals)
 		editing_id = 0
 		if (def_form_vals):
-			print(def_form_vals)
 			editing_id = def_form_vals['id']
 
 		annotations = Annotation.objects.filter(entry=entry)

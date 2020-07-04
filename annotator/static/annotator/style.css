@@ -85,3 +85,7 @@ form {
 .editing {
 	background-color: #459fd7;
 }
+
+#entry-text {
+	font-size: larger;
+}

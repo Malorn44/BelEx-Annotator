@@ -29,7 +29,6 @@
 		<a class="btn btn-light" href="{% url 'annotator:index' entry.eID|add:-1 %}"> &#8249;</a>
 		<a class="btn btn-light" href="{% url 'annotator:index' entry.eID|add:1 %}"> &#8250;</a>
 	</form>
-
 	
 	{% include "annotator/export_button.html" %}
 	<button class="btn btn-circle btn-lg top-right" onclick="alert('Export Annotations only exports those that are verified.\nAnnotations entered manually and those that are uploaded via the form on the Home page are automatically verified.\nYou can verify an annotation by clicking the Verify button or by clicking the Modify button and re-submitting.\nAnnotations you don\'t want can be removed with the Delete button.');"><i class="fa fa-question-circle"></i></button>
@@ -109,12 +108,13 @@
 	}
 
 	function getChangedText(elem_text, plain_text, str, className) {
-		console.log(plain_text)
-		inPlainText = plain_text.search(str);
-		startIndex = elem_text.search(str);
-		if (startIndex == -1 || inPlainText == -1) {
+		str_regex = new RegExp(str, 'i')
+		match_plain = plain_text.match(str_regex);
+		match_elem = elem_text.match(str_regex);
+		if (!match_plain || !match_elem) {
 			return null;
 		}
+		startIndex = elem_text.indexOf(match_elem[0])
 		endIndex = startIndex + str.length
 		elem_text = elem_text.substring(0, startIndex) + '<span class="' + className + '">' + elem_text.substring(startIndex, endIndex) + '</span>' + elem_text.substring(endIndex, elem_text.length);
 		return elem_text;
@@ -135,7 +135,6 @@
 		}
 		element.innerHTML = entry_text;
 	}
-
 	function highlightBelief(str) {
 		element = document.getElementById("entry-text");
 		clearTag(element, '.belief');
@@ -157,7 +156,6 @@
 		var entry_text = element.innerHTML;
 		var plain_entry_text = element.textContent;
 
-
 		if (str) {
 			changed_text = getChangedText(entry_text, plain_entry_text, str, 'target yellow-select');
 			if (changed_text) {
@@ -167,7 +165,6 @@
 		}
 		element.innerHTML = entry_text;
 	}
-
 </script>
 
 <div class="table">

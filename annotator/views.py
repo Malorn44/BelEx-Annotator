@@ -137,8 +137,8 @@ def copy_openIE_to_annotations(request, entry_pk):
 		args.append("Author")
 
 		belief = extraction.pred_text
-		for ext_arg in ext_args:
-			belief += ' ' + ext_arg.arg_text
+		if ext_args:
+			belief += ' ' + ext_args[0].arg_text
 
 		args.append(belief)
 		args.append(extraction.sub_text)

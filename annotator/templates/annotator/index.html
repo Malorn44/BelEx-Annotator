@@ -120,71 +120,37 @@
 		return elem_text;
 	}
 
-	function highlightSource(str) {
-		str = str.replace(/ +(?= )/g,'').trim();
-		element = document.getElementById("entry-text");
-		var orig_entry_text = element.innerHTML;
-		clearTag(element, '.source');
-		var entry_text = element.innerHTML;
-		var plain_entry_text = element.textContent;
-		var orig_length = plain_entry_text.length;
+	function highlight(str, tag, span_class) {
+		str = str.replace(/ + (?= )/g,'').trim();
+		entry_text_elem = document.getElementById("entry-text");
+		var orig_entry_text = entry_text_elem.innerHTML;
+		clearTag(entry_text_elem, tag);
+		var entry_text = entry_text_elem.innerHTML;
+		var plain_entry_text = entry_text_elem.textContent;
 
 		if (str) {
-			changed_text = getChangedText(entry_text, plain_entry_text, str, 'source yellow-select');
+			changed_text = getChangedText(entry_text, plain_entry_text, str, span_class);
 			if (changed_text) {
 				entry_text = changed_text;
 			} else {
 				entry_text = orig_entry_text;
 			}
 		}
-		element.innerHTML = entry_text;
-		if (element.textContent.length != orig_length) {
-			element.innerHTML = orig_entry_text;
+		entry_text_elem.innerHTML = entry_text;
+		if (entry_text_elem.textContent.length != plain_entry_text.length) {
+			entry_text_elem.innerHTML = orig_entry_text;
 		}
+	}
+
+	function highlightSource(str) {
+		highlight(str, '.source', 'source yellow-select');
 	}
 	function highlightBelief(str) {
-		str = str.replace(/ +(?= )/g,'').trim();
-		element = document.getElementById("entry-text");
-		var orig_entry_text = element.innerHTML;
-		clearTag(element, '.belief');
-		var entry_text = element.innerHTML;
-		var plain_entry_text = element.textContent;
-		var orig_length = plain_entry_text.length;
-
-		if (str) {
-			changed_text = getChangedText(entry_text, plain_entry_text, str, 'belief yellow-select');
-			if (changed_text) {
-				entry_text = changed_text;
-			} else {
-				entry_text = orig_entry_text;
-			}
-		}
-		element.innerHTML = entry_text;
-		if (element.textContent.length != orig_length) {
-			element.innerHTML = orig_entry_text;
-		}
+		highlight(str, '.belief', 'belief yellow-select');
+		
 	}
 	function highlightTarget(str) {
-		str = str.replace(/ +(?= )/g,'').trim();	
-		element = document.getElementById("entry-text");
-		var orig_entry_text = element.innerHTML;
-		clearTag(element, '.target');
-		var entry_text = element.innerHTML;
-		var plain_entry_text = element.textContent;
-		var orig_length = plain_entry_text.length;
-
-		if (str) {
-			changed_text = getChangedText(entry_text, plain_entry_text, str, 'target yellow-select');
-			if (changed_text) {
-				entry_text = changed_text;
-			} else {
-				entry_text = orig_entry_text;
-			}
-		}
-		element.innerHTML = entry_text;
-		if (element.textContent.length != orig_length) {
-			element.innerHTML = orig_entry_text;
-		}
+		highlight(str, '.target', 'target yellow-select');
 	}
 </script>
 

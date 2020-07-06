@@ -71,7 +71,7 @@
 	var sourceTimer;				// timer identifier
 	var beliefTimer;
 	var targetTimer;
-	var doneTypingInterval = 250;	// time in ms (0.25 second)
+	var doneTypingInterval = 100;	// time in ms (0.1 second)
 	var sourceInput = document.getElementById('id_source');
 	var beliefInput = document.getElementById('id_belief');
 	var targetInput = document.getElementById('id_target');
@@ -107,7 +107,7 @@
 			.html();
 	}
 
-	function getChangedText(elem_text, plain_text, str, className) {
+	function getChangedText(elem_text, plain_text, str, class_name) {
 		str_regex = new RegExp(str, 'i')
 		match_plain = plain_text.match(str_regex);
 		match_elem = elem_text.match(str_regex);
@@ -116,7 +116,7 @@
 		}
 		startIndex = elem_text.indexOf(match_elem[0])
 		endIndex = startIndex + str.length
-		elem_text = elem_text.substring(0, startIndex) + '<span class="' + className + '">' + elem_text.substring(startIndex, endIndex) + '</span>' + elem_text.substring(endIndex, elem_text.length);
+		elem_text = elem_text.substring(0, startIndex) + '<span class="' + class_name + '">' + elem_text.substring(startIndex, endIndex) + '</span>' + elem_text.substring(endIndex, elem_text.length);
 		return elem_text;
 	}
 
@@ -130,13 +130,15 @@
 			changed_text = getChangedText(entry_text, plain_entry_text, str, 'source yellow-select');
 			if (changed_text) {
 				entry_text = changed_text;
-				element.innerHTML = entry_text;
+			} else {
+				entry_text = orig_entry_text;
 			}
 		}
 		element.innerHTML = entry_text;
 	}
 	function highlightBelief(str) {
 		element = document.getElementById("entry-text");
+		var orig_entry_text = element.innerHTML;
 		clearTag(element, '.belief');
 		var entry_text = element.innerHTML;
 		var plain_entry_text = element.textContent;
@@ -145,7 +147,8 @@
 			changed_text = getChangedText(entry_text, plain_entry_text, str, 'belief yellow-select');
 			if (changed_text) {
 				entry_text = changed_text;
-				element.innerHTML = entry_text;
+			} else {
+				entry_text = orig_entry_text;
 			}
 		}
 		element.innerHTML = entry_text;
@@ -160,7 +163,8 @@
 			changed_text = getChangedText(entry_text, plain_entry_text, str, 'target yellow-select');
 			if (changed_text) {
 				entry_text = changed_text;
-				element.innerHTML = entry_text;
+			} else {
+				entry_text = orig_entry_text;
 			}
 		}
 		element.innerHTML = entry_text;

@@ -26,8 +26,33 @@ class Annotation(models.Model):
 	source = models.CharField(max_length=1000)
 	belief = models.CharField(max_length=1000)
 	target = models.CharField(max_length=1000)
-	strength = models.CharField(max_length=1000)
-	valuation = models.CharField(max_length=1000)
+	strength = models.IntegerField()
+	valuation = models.IntegerField()
 
 	verified = models.BooleanField(default=False)
+
+	@property
+	def strengthToText(self):
+		return {
+			1: 'Strongly Committed (true)',
+			2: 'Committed (true)',
+			3: 'Somewhat Committed (true)',
+			4: 'Undecided',
+			5: 'Somewhat Committed (false)',
+			6: 'Committed (false)',
+			7: 'Strongly Committed (false)',
+		}[self.strength]
+
+	@property
+	def valuationToText(self):
+		return {
+			1: 'Strongly Positive',
+			2: 'Positive',
+			3: 'Somewhat Positive',
+			4: 'Neutral',
+			5: 'Somewhat Negative',
+			6: 'Negative',
+			7: 'Strongly Negative',
+		}[self.valuation]
+	
 	

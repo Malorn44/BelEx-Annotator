@@ -83,12 +83,11 @@ def add_annotation(request, entry, args, verified):
 	annotations = Annotation.objects.filter(entry=entry)
 
 	for annotation in annotations:
-
 		if (annotation.source == args[0] and
 			annotation.belief == args[1] and
 			annotation.target == args[2] and
-			annotation.strength == args[3] and
-			annotation.valuation == args[4]):
+			str(annotation.strength) == args[3] and
+			str(annotation.valuation) == args[4]):
 
 			return
 

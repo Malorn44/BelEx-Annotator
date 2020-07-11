@@ -2,8 +2,9 @@
 {% load bootstrap4 %}
 {% bootstrap_css %}
 {% load static %}
+{% include "annotator/includes.html" %}
+
 <link rel="stylesheet" type="text/css" href="{% static 'annotator/style.css' %}">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 
 <script type="text/javascript">
 	window.addEventListener('load',function() {
@@ -18,6 +19,18 @@
 		localStorage.setItem('scrollPosition', 0)
 	}
 </script>
+
+{% if error %}
+    <div class="alert alert-danger alert-dismissable fade show">
+    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+    <span> 
+    	Something is wrong with the annotation and it has failed to submit/verify. <br>
+    	Check to make sure that Source, Belief and Target all have exact matches in the text and aren't overlapping (Source should be set to 'Author' if there is none explicitly mentioned in the text). <br>
+    	The matches should start and end in a full word. In other words, the annotation fields can't start or end in the middle of a word. <br>
+    	Check to make sure the placement of punctuation is correct in your annotation. The text being annotated will be highlighted with your exact match if one is found while typing in the form or editing an annotation.
+    </span>
+    </div>
+{% endif %}
 
 <div>
 	<form action="change_view" method="post" onsubmit="storeScrollTop()">

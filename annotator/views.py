@@ -45,20 +45,25 @@ def home(request):
 
 def index(request, entry_pk=1):
 	def_form_vals = []
+	error = False
 
 	if request.POST:
 		if '_export' in request.POST:
 			return export_annotations(request)
 		elif '_submit_annotation' in request.POST:
-			submit_belief(request, entry_pk)
+			if not submit_belief(request, entry_pk):
+				def_form_vals = invalid_form_prep(request, entry_pk)
+				error = True
 		elif '_openIE_copy' in request.POST:
 			copy_openIE_to_annotations(request, entry_pk)
 		elif '_delete_annotation' in request.POST:
 			delete_item(request, request.POST['_delete_annotation'])
 		elif '_modify_annotation' in request.POST:
 			def_form_vals = edit_item_prep(request, request.POST['_modify_annotation'])
+			print(def_form_vals)
 		elif '_verify_annotation' in request.POST:
-			verify_item(request, request.POST['_verify_annotation'])
+			if not verify_item(request, request.POST['_verify_annotation']):
+				error = True
 
 	try:
 		entry = Entry.objects.get(eID=entry_pk)
@@ -108,6 +113,74 @@ def modify_annotation(request, args):
 
 	annotation.save()
 
+def form_valid(request, data, entry_text):
+	match_found = False
+	source_is_author = data[0].lower() == 'author'
+	entry_text = ' ' + entry_text + ' ' #for the purpose of avoiding out of bounds error
+	print(entry_text)
+
+	for i in range(3):
+		print('[STEP 1]', i)
+		if match_found: break
+		# start checking with source, then belief than target
+		if ((i==0 and not source_is_author) or i!=0):
+			start_index_i = entry_text.find(data[i])
+			print(start_index_i, start_index_i+len(data[i]))
+			if (start_index_i == -1 or entry_text[start_index_i+len(data[i])].isalnum()
+				or entry_text[start_index_i-1].isalnum()):
+				print('Not Found')
+				return False
+
+			entry_minus_i = ' ' + entry_text[:start_index_i] + entry_text[start_index_i+len(data[i]):-1] + ' '
+		else: 
+			entry_minus_i = entry_text
+
+		print(entry_minus_i)
+
+		for j in range(3):
+			print('[STEP 2]', j)
+			if match_found: break
+			# source, belief, target ignore if j==i
+			if j==i: continue
+
+			if ((j==0 and not source_is_author) or j!=0):
+				start_index_j = entry_minus_i.find(data[j])
+				print(start_index_j, start_index_j+len(data[j]))
+				if (start_index_j == -1 or entry_minus_i[start_index_j+len(data[j])].isalnum()
+					or entry_minus_i[start_index_j-1].isalnum()):
+					print('Not Found')
+					continue
+
+				entry_minus_j = ' ' + entry_minus_i[:start_index_j] + entry_minus_i[start_index_j+len(data[j]):-1] + ' '
+			else:
+				entry_minus_j = entry_minus_i
+
+			print(entry_minus_j)
+
+			for k in range(3):
+				print('[STEP 3]', k)
+				#source, belief, target ignore if k==i or k==j
+				if k==i or k==j: continue
+
+				if ((k==0 and not source_is_author) or k!=0):
+					start_index_k = entry_minus_j.find(data[k])
+					if (start_index_k == -1 or entry_minus_j[start_index_k+len(data[k])].isalnum()
+						or entry_minus_j[start_index_k-1].isalnum()):
+						print('Not Found')
+						continue
+				match_found = True
+				print('Match Found')
+				break
+
+	return match_found
+
+def invalid_form_prep(request, entry_pk):
+	form = AnnotatorForm(request.POST)
+	if form.is_valid():
+		data = [item[1] for item in form.cleaned_data.items()]
+		return {'_state': None, 'id': data[5], 'source': data[0],
+			'belief': data[1], 'target': data[2], 'strength': data[3],
+			'valuation': data[4], 'verified': True}
 
 def submit_belief(request, entry_pk):
 	entry = Entry.objects.get(eID=entry_pk)
@@ -115,12 +188,18 @@ def submit_belief(request, entry_pk):
 	form = AnnotatorForm(request.POST)
 	if form.is_valid():
 
+		
 		data = [item[1] for item in form.cleaned_data.items()]
-		if data[5] is None:
-			# we can verify annotations that are handwritten
-			add_annotation(request, entry, data, True)
+
+		# Check if form matches has matches in entry text
+		if form_valid(request, data, entry.entry_text):  
+			if data[5] is None:
+				# we can verify annotations that are handwritten
+				add_annotation(request, entry, data, True)
+			else:
+				modify_annotation(request, data)
 		else:
-			modify_annotation(request, data)
+			return False
 
 	return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
@@ -228,11 +307,14 @@ def verify_item(request, item_pk):
 	try:
 		annotation = Annotation.objects.get(pk=item_pk)
 	except Annotation.DoesNotExist:
-		return
+		return False
 	else:
-		annotation.verified = True
-		annotation.save()
-		return
+		if form_valid(request, [annotation.source, annotation.belief, annotation.target], 
+				annotation.entry.entry_text):
+			annotation.verified = True
+			annotation.save()
+			return True
+		return False
 
 def export_annotations(request):
 
